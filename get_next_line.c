@@ -1,10 +1,18 @@
-#include <unistd.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include "libft/libft.h"
-#define BUFF_SIZE 32
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sprodan- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/01/18 20:33:49 by sprodan-          #+#    #+#             */
+/*   Updated: 2018/01/18 20:40:00 by sprodan-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static int 	ft_strnllen(char *s)
+#include "get_next_line.h"
+
+static int	ft_strnllen(char *s)
 {
 	int i;
 
@@ -33,29 +41,30 @@ static char	*ft_strnlchar(char *s)
 	return (s2);
 }
 
-int		get_next_line(const int fd, char **line)
+int			get_next_line(const int fd, char **line)
 {
 	static char	*bufv[1000];
 	int			buff;
 	char		*tmp;
 	char		*p;
 
-	if (fd < 0 || !(tmp = ft_strnew(BUFF_SIZE)) || !line || (buff = read(fd, tmp, 0)) < 0)
+	tmp = ft_strnew(BUFF_SIZE);
+	if (fd < 0 || !line || (buff = read(fd, tmp, 0)) < 0)
 		return (-1);
 	if (!bufv[fd])
-		{
-			if (!(bufv[fd] = ft_strnew(BUFF_SIZE)))
-				return (-1);
-		}
+	{
+		if (!(bufv[fd] = ft_strnew(BUFF_SIZE)))
+			return (-1);
+	}
 	buff = 1;
-	while (!(ft_strchr(bufv[fd],'\n')) &&  buff > 0)
+	while (!(ft_strchr(bufv[fd], '\n')) && buff > 0)
 	{
 		if ((buff = read(fd, tmp, BUFF_SIZE + 1)) < 0)
 			return (-1);
 		tmp[buff] = '\0';
 		bufv[fd] = ft_strjoin(bufv[fd], tmp);
 	}
-	if(!(*line = ft_strnlchar(bufv[fd])))
+	if (!(*line = ft_strnlchar(bufv[fd])))
 		return (-1);
 	if (buff)
 	{
@@ -65,21 +74,7 @@ int		get_next_line(const int fd, char **line)
 	else
 		bufv[fd] = "";
 	free(tmp);
-	
-}
-
-int main(int argc, char **argv)
-{
-	int		fd;
-	char	*line[argc];
-	int		i;
-
-
-	fd = open(argv[1], 0);
-	
-	while (get_next_line(fd, &line[0]))
-		ft_putendl(line[0]);
-	
-	
+	if (*line[0] || bufv[fd][0] || buff)
+		return (1);
 	return (0);
 }
