@@ -6,7 +6,7 @@
 /*   By: sprodan- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/18 20:33:49 by sprodan-          #+#    #+#             */
-/*   Updated: 2018/01/19 20:38:27 by sprodan-         ###   ########.fr       */
+/*   Updated: 2018/01/19 20:50:15 by sprodan-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int			get_next_line(const int fd, char **line)
 	char		*b;
 
 	tmp = ft_strnew(BUFF_SIZE);
-	if (fd < 0 || !line || (buff = read(fd, tmp, 0)) < 0)
+	if (fd < 0 || !line)
 		return (-1);
 	if (!bufv[fd])
 		bufv[fd] = ft_strnew(BUFF_SIZE);
