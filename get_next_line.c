@@ -6,7 +6,7 @@
 /*   By: sprodan- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/18 20:33:49 by sprodan-          #+#    #+#             */
-/*   Updated: 2018/01/18 20:40:00 by sprodan-         ###   ########.fr       */
+/*   Updated: 2018/01/19 20:38:27 by sprodan-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,12 @@ int			ft_readbufv(int fd, char **b, int *buff, char **tmp)
 	tmp2 = *tmp;
 	bufv2 = *b;
 	while (!(ft_strchr(bufv2, '\n')) && *buff > 0)
-		{
-			if ((*buff = read(fd, tmp2, BUFF_SIZE + 1)) < 0)
-				return (-1);
-			tmp2[*buff] = '\0';
-			bufv2 = ft_strjoin(bufv2, tmp2);
-		}
+	{
+		if ((*buff = read(fd, tmp2, BUFF_SIZE)) < 0)
+			return (-1);
+		tmp2[*buff] = '\0';
+		bufv2 = ft_strjoin(bufv2, tmp2);
+	}
 	*b = bufv2;
 	*tmp = tmp2;
 	return (0);
@@ -86,5 +86,34 @@ int			get_next_line(const int fd, char **line)
 	free(tmp);
 	if (*line[0] || bufv[fd][0] || buff)
 		return (1);
+	return (0);
+}
+
+int	main(int argc, char **argv)
+{
+	int		fd[argc];
+	char	*line[argc];
+	int		i;
+
+	i = 1;
+	while (i < argc)
+	{
+		fd[i] = open(argv[i], 0);
+		++i;
+	}
+	i = 1;
+	while (i < argc)
+	{
+		while (get_next_line(fd[i], &line[i]))
+			ft_putendl(line[i]);
+		++i;
+	}
+	i = 1;
+	while (i < argc)
+	{
+		close(fd[i]);
+		++i;
+	}
+
 	return (0);
 }
