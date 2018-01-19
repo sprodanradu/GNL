@@ -41,42 +41,25 @@ static char	*ft_strnlchar(char *s)
 	return (s2);
 }
 
-int			ft_readbufv(int fd, char **b, int *buff, char **tmp)
-{
-	char *tmp2;
-	char *bufv2;
-
-	tmp2 = *tmp;
-	bufv2 = *b;
-	while (!(ft_strchr(bufv2, '\n')) && *buff > 0)
-		{
-			if ((*buff = read(fd, tmp2, BUFF_SIZE + 1)) < 0)
-				return (-1);
-			tmp2[*buff] = '\0';
-			bufv2 = ft_strjoin(bufv2, tmp2);
-		}
-	*b = bufv2;
-	*tmp = tmp2;
-	return (0);
-}
-
 int			get_next_line(const int fd, char **line)
 {
 	static char	*bufv[1000];
 	int			buff;
 	char		*tmp;
-	char		*b;
 
-	tmp = ft_strnew(BUFF_SIZE);
-	if (fd < 0 || !line || (buff = read(fd, tmp, 0)) < 0)
+	if (fd < 0 || !line)
 		return (-1);
 	if (!bufv[fd])
 		bufv[fd] = ft_strnew(BUFF_SIZE);
+	tmp = ft_strnew(BUFF_SIZE);
 	buff = 1;
-	b = bufv[fd];
-	if (ft_readbufv(fd, &b, &buff, &tmp) == -1)
-		return (-1);
-	bufv[fd] = b;
+	while (!(ft_strchr(bufv[fd], '\n')) && buff > 0)
+	{
+		if ((buff = read(fd, tmp, BUFF_SIZE + 1)) < 0)
+			return (-1);
+		tmp[buff] = '\0';
+		bufv[fd] = ft_strjoin(bufv[fd], tmp);
+	}
 	if (!(*line = ft_strnlchar(bufv[fd])))
 		return (-1);
 	if (buff)
@@ -84,7 +67,5 @@ int			get_next_line(const int fd, char **line)
 	else
 		bufv[fd] = "";
 	free(tmp);
-	if (*line[0] || bufv[fd][0] || buff)
-		return (1);
-	return (0);
+	return (*line[0] || bufv[fd][0] || buff ? 1 : 0);
 }
