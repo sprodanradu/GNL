@@ -43,7 +43,7 @@ static char	*ft_strnlchar(char *s)
 
 int			get_next_line(const int fd, char **line)
 {
-	static char	*bufv[1000];
+	static char	*bufv[13000];
 	int			buff;
 	char		*tmp;
 
