@@ -31,6 +31,8 @@ static char	*ft_strnlchar(char *s)
 
 	if (!(s2 = ft_strnew(ft_strnllen(s))))
 		return (NULL);
+	if (!ft_strnllen(s))
+		return (ft_strdup(""));
 	i = 0;
 	while (i < ft_strnllen(s))
 	{
@@ -43,31 +45,31 @@ static char	*ft_strnlchar(char *s)
 
 int			get_next_line(const int fd, char **line)
 {
-	static char	*bufv[13000];
+	static char	*bufv[256];
 	int			buff;
 	char		*tmp;
 
+	if (!bufv[fd % 256])
+		bufv[fd % 256] = (char*)ft_memalloc(sizeof(char) * BUFF_SIZE + 1);
+	tmp = (char*)malloc(sizeof(char) * BUFF_SIZE + 1);
 	if (fd < 0 || !line)
 		return (-1);
-	if (!bufv[fd])
-		bufv[fd] = ft_strnew(BUFF_SIZE);
-	tmp = ft_strnew(BUFF_SIZE);
 	buff = 1;
-	while (!(ft_strchr(bufv[fd], '\n')) && buff > 0)
+	while (!ft_strchr(bufv[fd % 256], '\n') && buff > 0)
 	{
-		if ((buff = read(fd, tmp, BUFF_SIZE + 1)) < 0)
+		buff = read(fd, tmp, BUFF_SIZE);
+		if (buff < 0)
 			return (-1);
-		tmp[buff] = '\0';
-		bufv[fd] = ft_strjoin(bufv[fd], tmp);
+		tmp[ret] = '\0';
+		bufv[fd % 256] = ft_strjoin(bufv[fd % 256], tmp);
 	}
-	if (!(*line = ft_strnlchar(bufv[fd])))
-		return (-1);
+	*line = ft_strnlchr(bufv[fd % 256]);
 	if (buff)
-		bufv[fd] = ft_strchr(bufv[fd], '\n') + 1;
+		bufv[fd % 256] = ft_strdup(&ft_strchr(bufv[fd % 256], '\n')[1]);
 	else
-		bufv[fd] = "";
+		bufv[fd % 256] = ft_strdup("");
 	free(tmp);
-	return (*line[0] || bufv[fd][0] || buff ? 1 : 0);
+	return (*line[0] || bufv[fd % 256][0] || buff ? 1 : 0);
 }
 
 int	main(int argc, char **argv)
