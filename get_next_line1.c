@@ -69,3 +69,32 @@ int			get_next_line(const int fd, char **line)
 	free(tmp);
 	return (*line[0] || bufv[fd][0] || buff ? 1 : 0);
 }
+
+int	main(int argc, char **argv)
+{
+	int		fd[argc];
+	char	*line[argc];
+	int		i;
+
+	i = 1;
+	while (i < argc)
+	{
+		fd[i] = open(argv[i], 0);
+		++i;
+	}
+	i = 1;
+	while (i < argc)
+	{
+		while (get_next_line(fd[i], &line[i]))
+			ft_putendl(line[i]);
+		++i;
+	}
+	i = 1;
+	while (i < argc)
+	{
+		close(fd[i]);
+		++i;
+	}
+
+	return (0);
+}
