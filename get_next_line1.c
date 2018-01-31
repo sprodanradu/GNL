@@ -6,7 +6,7 @@
 /*   By: sprodan- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/18 20:33:49 by sprodan-          #+#    #+#             */
-/*   Updated: 2018/01/18 20:40:00 by sprodan-         ###   ########.fr       */
+/*   Updated: 2018/01/31 20:28:19 by sprodan-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,43 +60,14 @@ int			get_next_line(const int fd, char **line)
 		buff = read(fd, tmp, BUFF_SIZE);
 		if (buff < 0)
 			return (-1);
-		tmp[ret] = '\0';
+		tmp[buff] = '\0';
 		bufv[fd % 256] = ft_strjoin(bufv[fd % 256], tmp);
 	}
-	*line = ft_strnlchr(bufv[fd % 256]);
+	*line = ft_strnlchar(bufv[fd % 256]);
 	if (buff)
 		bufv[fd % 256] = ft_strdup(&ft_strchr(bufv[fd % 256], '\n')[1]);
 	else
 		bufv[fd % 256] = ft_strdup("");
 	free(tmp);
 	return (*line[0] || bufv[fd % 256][0] || buff ? 1 : 0);
-}
-
-int	main(int argc, char **argv)
-{
-	int		fd[argc];
-	char	*line[argc];
-	int		i;
-
-	i = 1;
-	while (i < argc)
-	{
-		fd[i] = open(argv[i], 0);
-		++i;
-	}
-	i = 1;
-	while (i < argc)
-	{
-		while (get_next_line(fd[i], &line[i]))
-			ft_putendl(line[i]);
-		++i;
-	}
-	i = 1;
-	while (i < argc)
-	{
-		close(fd[i]);
-		++i;
-	}
-
-	return (0);
 }
